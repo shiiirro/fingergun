@@ -1,0 +1,4 @@
+opencv-python~=4.8.0.76
+numpy~=1.25.2
+mediapipe~=0.10.3
+pydirectinput-rgx~=2.0.8

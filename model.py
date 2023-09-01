@@ -21,10 +21,9 @@ camera_matrix = np.array(
      [0, 0, 1]], dtype = "double")
 distortion = np.zeros((4, 1))
 
-
+# Helper methods courtesy of https://stackoverflow.com/questions/2827393/angles-between-two-n-dimensional-vectors-in-python
 def unit_vector(vector):
     return vector / np.linalg.norm(vector)
-
 
 def angle_between(v1, v2):
     v1_u = unit_vector(v1)
@@ -42,10 +41,12 @@ class HandModel:
         self.debug = debug
 
     def update_from(self, frame: np.ndarray):
+        """Processes the given image asynchronously to update model values"""
         mp_image = mp.Image(image_format = mp.ImageFormat.SRGB, data = frame)
         self.landmarker.detect_async(mp_image, int(time.time() * 1000))
 
     def mark_on(self, frame: np.ndarray):
+        """Annotates the given image to display landmarker location and other info"""
         if self.raw_results.hand_landmarks:
             hands = self.raw_results.hand_landmarks
             annotated_frame = np.copy(frame)
@@ -71,6 +72,7 @@ class HandModel:
         self.landmarker.close()
 
     def _create_landmarker(self):
+        """Creates a mediapipe hand landmarker with a callback that updates model attributes"""
         def callback(result: HandLandmarkerResult, output_image: mp.Image, timestamp_ms: int):
             self.raw_results = result
             self._calculate_3D_world_coordinates()
@@ -102,12 +104,14 @@ class HandModel:
             self.coordinates = np.delete(hom_coord.dot(np.linalg.inv(transformation).T), 3, 1)
 
     def _determine_pose(self):
+        """Helper method using linalg and other calculations to estimate current hand pose"""
         if self.raw_results.hand_landmarks:
             idx_mid_dist = np.linalg.norm(self.coordinates[8] - self.coordinates[11])
             if idx_mid_dist < 0.05:
                 self.pose = "HOVER"
             else:
-                thumb_idx_dist = min(np.linalg.norm(self.coordinates[4] - self.coordinates[5]), np.linalg.norm(self.coordinates[4] - self.coordinates[6]))
+                thumb_idx_dist = min(np.linalg.norm(self.coordinates[4] - self.coordinates[5]),
+                                     np.linalg.norm(self.coordinates[4] - self.coordinates[6]))
                 if thumb_idx_dist < 0.04:
                     self.pose = "SHOOT"
                 else:
