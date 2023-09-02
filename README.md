@@ -1,6 +1,6 @@
 # fingergun
 A lightweight virtual air gun implemented with perspective-n-point using Google Mediapipe, OpenCV, and PyDirectInput libraries.
-## Demo
+
 ![demo](./.media/demo.gif)
 ## Features
 - 3D hand tracking mapped to relative mouse movements for use in first-person games
