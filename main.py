@@ -45,6 +45,7 @@ def main():
             elif model.pose != "SHOOT" and shooting:
                 pydirectinput.mouseUp(_pause = False)
                 shooting = False
+
             if model.pose == "RELOAD":
                 pydirectinput.press('r')
 

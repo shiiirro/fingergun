@@ -120,7 +120,6 @@ class HandModel:
                     flat_normal = np.array([0, 1, 0])
 
                     angle = angle_between(hand_normal, flat_normal)
-                    print(angle)
                     if angle < 1.3:
                         self.pose = "RELOAD"
                     else:
